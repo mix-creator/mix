@@ -19,11 +19,6 @@
             --warning: #fbbf24;
             --error: #f87171;
             --border: #1f3d1f;
-            --goblin-green: #3d7a3d;
-            --goblin-dark: #1a3d1a;
-            --goblin-light: #5a9a5a;
-            --goblin-eye: #ff6b6b;
-            --goblin-pupil: #1a0a0a;
         }
 
         * {
@@ -48,250 +43,28 @@
 
         header {
             text-align: center;
-            padding: 3rem 0;
+            padding: 2rem 0;
             border-bottom: 1px solid var(--border);
             margin-bottom: 2rem;
         }
 
-        /* 3D Goblin Container */
         .goblin-container {
-            width: 200px;
-            height: 200px;
+            width: 280px;
+            height: 320px;
             margin: 0 auto 1rem;
-            perspective: 1000px;
+            position: relative;
+            animation: breathe 4s ease-in-out infinite;
         }
 
-        .goblin-face {
+        @keyframes breathe {
+            0%, 100% { transform: scale(1) translateY(0); }
+            50% { transform: scale(1.02) translateY(-3px); }
+        }
+
+        .goblin-container svg {
             width: 100%;
             height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-            animation: float 4s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotateX(5deg); }
-            50% { transform: translateY(-10px) rotateX(-5deg); }
-        }
-
-        /* Goblin Head */
-        .goblin-head {
-            position: absolute;
-            width: 140px;
-            height: 160px;
-            background: linear-gradient(145deg, var(--goblin-green) 0%, var(--goblin-dark) 100%);
-            border-radius: 60% 60% 50% 50% / 70% 70% 40% 40%;
-            top: 20px;
-            left: 30px;
-            box-shadow: 
-                inset -10px -10px 20px rgba(0,0,0,0.3),
-                inset 10px 10px 20px rgba(255,255,255,0.1),
-                0 10px 30px rgba(0,0,0,0.5),
-                0 0 40px rgba(74, 138, 74, 0.3);
-            transform: translateZ(20px);
-        }
-
-        /* Ears */
-        .ear {
-            position: absolute;
-            width: 50px;
-            height: 70px;
-            background: linear-gradient(145deg, var(--goblin-green) 0%, var(--goblin-dark) 100%);
-            top: 40px;
-            border-radius: 50% 50% 30% 30%;
-            box-shadow: inset -5px -5px 10px rgba(0,0,0,0.2);
-        }
-
-        .ear-left {
-            left: -25px;
-            transform: rotate(-30deg) translateZ(10px);
-            animation: earTwitchLeft 5s ease-in-out infinite;
-        }
-
-        .ear-right {
-            right: -25px;
-            transform: rotate(30deg) translateZ(10px);
-            animation: earTwitchRight 5s ease-in-out infinite 2.5s;
-        }
-
-        @keyframes earTwitchLeft {
-            0%, 90%, 100% { transform: rotate(-30deg) translateZ(10px); }
-            95% { transform: rotate(-40deg) translateZ(10px); }
-        }
-
-        @keyframes earTwitchRight {
-            0%, 90%, 100% { transform: rotate(30deg) translateZ(10px); }
-            95% { transform: rotate(40deg) translateZ(10px); }
-        }
-
-        /* Eyes Container */
-        .eyes {
-            position: absolute;
-            top: 55px;
-            left: 50%;
-            transform: translateX(-50%) translateZ(30px);
-            display: flex;
-            gap: 20px;
-        }
-
-        .eye {
-            width: 35px;
-            height: 45px;
-            background: var(--goblin-eye);
-            border-radius: 50%;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 
-                inset 3px 3px 8px rgba(0,0,0,0.3),
-                0 3px 10px rgba(0,0,0,0.3);
-            animation: blink 4s ease-in-out infinite;
-        }
-
-        @keyframes blink {
-            0%, 48%, 52%, 100% { transform: scaleY(1); }
-            50% { transform: scaleY(0.1); }
-        }
-
-        .pupil {
-            position: absolute;
-            width: 18px;
-            height: 22px;
-            background: var(--goblin-pupil);
-            border-radius: 50%;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            animation: lookAround 6s ease-in-out infinite;
-        }
-
-        .pupil::after {
-            content: '';
-            position: absolute;
-            width: 6px;
-            height: 8px;
-            background: white;
-            border-radius: 50%;
-            top: 3px;
-            right: 3px;
-            opacity: 0.8;
-        }
-
-        @keyframes lookAround {
-            0%, 100% { transform: translate(-50%, -50%) translate(0, 0); }
-            20% { transform: translate(-50%, -50%) translate(-5px, -3px); }
-            40% { transform: translate(-50%, -50%) translate(5px, 2px); }
-            60% { transform: translate(-50%, -50%) translate(0, -5px); }
-            80% { transform: translate(-50%, -50%) translate(-3px, 3px); }
-        }
-
-        /* Eyebrows */
-        .eyebrow {
-            position: absolute;
-            width: 45px;
-            height: 12px;
-            background: linear-gradient(90deg, transparent, var(--goblin-dark), transparent);
-            border-radius: 50%;
-            top: 45px;
-        }
-
-        .eyebrow-left {
-            left: 35px;
-            transform: rotate(-15deg) translateZ(35px);
-        }
-
-        .eyebrow-right {
-            right: 35px;
-            transform: rotate(15deg) translateZ(35px);
-        }
-
-        /* Nose */
-        .nose {
-            position: absolute;
-            width: 25px;
-            height: 35px;
-            background: linear-gradient(145deg, var(--goblin-light), var(--goblin-green));
-            border-radius: 50% 50% 60% 60%;
-            top: 85px;
-            left: 50%;
-            transform: translateX(-50%) translateZ(35px);
-            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
-        }
-
-        /* Mouth */
-        .mouth {
-            position: absolute;
-            width: 60px;
-            height: 30px;
-            border: 4px solid var(--goblin-dark);
-            border-top: none;
-            border-radius: 0 0 50% 50%;
-            top: 110px;
-            left: 50%;
-            transform: translateX(-50%) translateZ(30px);
-            animation: mouthMove 3s ease-in-out infinite;
-        }
-
-        @keyframes mouthMove {
-            0%, 100% { width: 60px; border-radius: 0 0 50% 50%; }
-            50% { width: 55px; border-radius: 0 0 40% 40%; }
-        }
-
-        /* Teeth */
-        .tooth {
-            position: absolute;
-            width: 12px;
-            height: 15px;
-            background: #f0f0d0;
-            border-radius: 0 0 30% 30%;
-            bottom: -4px;
-        }
-
-        .tooth-left {
-            left: 10px;
-        }
-
-        .tooth-right {
-            right: 10px;
-        }
-
-        /* Horns */
-        .horn {
-            position: absolute;
-            width: 0;
-            height: 0;
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-bottom: 30px solid var(--goblin-dark);
-            top: -5px;
-            filter: drop-shadow(0 3px 5px rgba(0,0,0,0.3));
-        }
-
-        .horn-left {
-            left: 30px;
-            transform: rotate(-20deg) translateZ(15px);
-        }
-
-        .horn-right {
-            right: 30px;
-            transform: rotate(20deg) translateZ(15px);
-        }
-
-        /* Glow effect */
-        .goblin-glow {
-            position: absolute;
-            width: 180px;
-            height: 180px;
-            background: radial-gradient(circle, rgba(74, 138, 74, 0.3) 0%, transparent 70%);
-            top: 10px;
-            left: 10px;
-            border-radius: 50%;
-            animation: pulseGlow 3s ease-in-out infinite;
-            pointer-events: none;
-        }
-
-        @keyframes pulseGlow {
-            0%, 100% { opacity: 0.5; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.1); }
+            filter: drop-shadow(0 10px 30px rgba(74, 138, 74, 0.4));
         }
 
         h1 {
@@ -299,6 +72,7 @@
             font-weight: 300;
             letter-spacing: -0.02em;
             color: var(--text-primary);
+            margin-top: 0.5rem;
         }
 
         .subtitle {
@@ -560,81 +334,12 @@
             }
 
             .goblin-container {
-                width: 150px;
-                height: 150px;
+                width: 200px;
+                height: 230px;
             }
 
-            .goblin-head {
-                width: 105px;
-                height: 120px;
-                left: 22px;
-                top: 15px;
-            }
-
-            .ear {
-                width: 37px;
-                height: 52px;
-            }
-
-            .ear-left { left: -18px; top: 30px; }
-            .ear-right { right: -18px; top: 30px; }
-
-            .eyes {
-                top: 40px;
-                gap: 15px;
-            }
-
-            .eye {
-                width: 26px;
-                height: 34px;
-            }
-
-            .pupil {
-                width: 13px;
-                height: 16px;
-            }
-
-            .eyebrow {
-                width: 33px;
-                height: 9px;
-                top: 33px;
-            }
-
-            .eyebrow-left { left: 26px; }
-            .eyebrow-right { right: 26px; }
-
-            .nose {
-                width: 18px;
-                height: 26px;
-                top: 63px;
-            }
-
-            .mouth {
-                width: 45px;
-                height: 22px;
-                top: 82px;
-            }
-
-            .tooth {
-                width: 9px;
-                height: 11px;
-            }
-
-            .horn {
-                border-left: 7px solid transparent;
-                border-right: 7px solid transparent;
-                border-bottom: 22px solid var(--goblin-dark);
-                top: -3px;
-            }
-
-            .horn-left { left: 22px; }
-            .horn-right { right: 22px; }
-
-            .goblin-glow {
-                width: 135px;
-                height: 135px;
-                top: 7px;
-                left: 7px;
+            h1 {
+                font-size: 2rem;
             }
         }
     </style>
@@ -643,29 +348,153 @@
     <div class="container">
         <header>
             <div class="goblin-container">
-                <div class="goblin-face">
-                    <div class="goblin-glow"></div>
-                    <div class="horn horn-left"></div>
-                    <div class="horn horn-right"></div>
-                    <div class="ear ear-left"></div>
-                    <div class="ear ear-right"></div>
-                    <div class="goblin-head"></div>
-                    <div class="eyebrow eyebrow-left"></div>
-                    <div class="eyebrow eyebrow-right"></div>
-                    <div class="eyes">
-                        <div class="eye">
-                            <div class="pupil"></div>
-                        </div>
-                        <div class="eye">
-                            <div class="pupil"></div>
-                        </div>
-                    </div>
-                    <div class="nose"></div>
-                    <div class="mouth">
-                        <div class="tooth tooth-left"></div>
-                        <div class="tooth tooth-right"></div>
-                    </div>
-                </div>
+                <svg viewBox="0 0 280 320" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <!-- Skin gradients -->
+                        <radialGradient id="skinGrad" cx="50%" cy="40%" r="60%">
+                            <stop offset="0%" stop-color="#7a9a6a"/>
+                            <stop offset="50%" stop-color="#5a7a4a"/>
+                            <stop offset="100%" stop-color="#3d5a3a"/>
+                        </radialGradient>
+                        <radialGradient id="earGrad" cx="30%" cy="50%" r="70%">
+                            <stop offset="0%" stop-color="#6a8a5a"/>
+                            <stop offset="100%" stop-color="#4a6a3a"/>
+                        </radialGradient>
+                        <linearGradient id="noseGrad" x1="50%" y1="0%" x2="50%" y2="100%">
+                            <stop offset="0%" stop-color="#8aaa7a"/>
+                            <stop offset="100%" stop-color="#5a7a4a"/>
+                        </linearGradient>
+                        <!-- Eye gradients -->
+                        <radialGradient id="eyeGrad" cx="50%" cy="50%" r="50%">
+                            <stop offset="60%" stop-color="#c4a86b"/>
+                            <stop offset="100%" stop-color="#8a7a4a"/>
+                        </radialGradient>
+                        <radialGradient id="pupilGrad" cx="30%" cy="30%" r="70%">
+                            <stop offset="0%" stop-color="#2a1a0a"/>
+                            <stop offset="100%" stop-color="#0a0a0a"/>
+                        </radialGradient>
+                        <!-- Filters for depth -->
+                        <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                            <feDropShadow dx="2" dy="4" stdDeviation="3" flood-opacity="0.3"/>
+                        </filter>
+                        <filter id="innerShadow">
+                            <feOffset dx="0" dy="2"/>
+                            <feGaussianBlur stdDeviation="2" result="offset-blur"/>
+                            <feComposite operator="out" in="SourceGraphic" in2="offset-blur" result="inverse"/>
+                            <feFlood flood-color="black" flood-opacity="0.3" result="color"/>
+                            <feComposite operator="in" in="color" in2="inverse" result="shadow"/>
+                            <feComposite operator="over" in="shadow" in2="SourceGraphic"/>
+                        </filter>
+                    </defs>
+
+                    <!-- Glow background -->
+                    <ellipse cx="140" cy="160" rx="130" ry="150" fill="url(#skinGrad)" opacity="0.1">
+                        <animate attributeName="opacity" values="0.1;0.2;0.1" dur="3s" repeatCount="indefinite"/>
+                    </ellipse>
+
+                    <!-- Left Ear (back) -->
+                    <path d="M60 140 Q20 120 15 90 Q10 60 35 55 Q55 50 70 80 L85 130" fill="url(#earGrad)" stroke="#3d4a3a" stroke-width="1"/>
+                    <path d="M60 140 Q30 125 25 100 Q22 80 40 75" fill="#4a5a3a" opacity="0.5"/>
+
+                    <!-- Right Ear (back) -->
+                    <path d="M220 140 Q260 120 265 90 Q270 60 245 55 Q225 50 210 80 L195 130" fill="url(#earGrad)" stroke="#3d4a3a" stroke-width="1"/>
+                    <path d="M220 140 Q250 125 255 100 Q258 80 240 75" fill="#4a5a3a" opacity="0.5"/>
+
+                    <!-- Head shape -->
+                    <ellipse cx="140" cy="150" rx="75" ry="90" fill="url(#skinGrad)" filter="url(#shadow)"/>
+
+                    <!-- Forehead wrinkles -->
+                    <path d="M110 85 Q140 80 170 85" stroke="#4a5a3a" stroke-width="2" fill="none" opacity="0.4"/>
+                    <path d="M115 95 Q140 92 165 95" stroke="#4a5a3a" stroke-width="1.5" fill="none" opacity="0.3"/>
+                    <path d="M120 105 Q140 103 160 105" stroke="#4a5a3a" stroke-width="1" fill="none" opacity="0.3"/>
+
+                    <!-- Heavy brow ridge -->
+                    <path d="M95 125 Q140 115 185 125 Q190 130 140 132 Q90 130 95 125" fill="#4a5a4a" filter="url(#shadow)"/>
+
+                    <!-- Left Eye -->
+                    <g transform="translate(105, 140)">
+                        <!-- Eye socket shadow -->
+                        <ellipse cx="0" cy="0" rx="22" ry="18" fill="#3a4a3a" opacity="0.5"/>
+                        <!-- Eyeball -->
+                        <ellipse cx="0" cy="2" rx="18" ry="14" fill="url(#eyeGrad)"/>
+                        <!-- Iris/Pupil -->
+                        <ellipse cx="0" cy="2" rx="8" ry="10" fill="url(#pupilGrad)"/>
+                        <!-- Highlight -->
+                        <ellipse cx="3" cy="-1" rx="3" ry="4" fill="white" opacity="0.6"/>
+                        <!-- Eyelid crease -->
+                        <path d="M-18 -5 Q0 -12 18 -5" stroke="#4a5a3a" stroke-width="2" fill="none"/>
+                        <!-- Under eye bag -->
+                        <path d="M-15 12 Q0 16 15 12" stroke="#5a6a4a" stroke-width="1" fill="none" opacity="0.5"/>
+                    </g>
+
+                    <!-- Right Eye -->
+                    <g transform="translate(175, 140)">
+                        <!-- Eye socket shadow -->
+                        <ellipse cx="0" cy="0" rx="22" ry="18" fill="#3a4a3a" opacity="0.5"/>
+                        <!-- Eyeball -->
+                        <ellipse cx="0" cy="2" rx="18" ry="14" fill="url(#eyeGrad)"/>
+                        <!-- Iris/Pupil -->
+                        <ellipse cx="0" cy="2" rx="8" ry="10" fill="url(#pupilGrad)"/>
+                        <!-- Highlight -->
+                        <ellipse cx="3" cy="-1" rx="3" ry="4" fill="white" opacity="0.6"/>
+                        <!-- Eyelid crease -->
+                        <path d="M-18 -5 Q0 -12 18 -5" stroke="#4a5a3a" stroke-width="2" fill="none"/>
+                        <!-- Under eye bag -->
+                        <path d="M-15 12 Q0 16 15 12" stroke="#5a6a4a" stroke-width="1" fill="none" opacity="0.5"/>
+                    </g>
+
+                    <!-- Long crooked nose (Harry Potter style) -->
+                    <g filter="url(#shadow)">
+                        <!-- Nose bridge -->
+                        <path d="M140 135 Q135 160 138 185 Q142 210 140 230" fill="url(#noseGrad)" stroke="#4a5a3a" stroke-width="1"/>
+                        <!-- Nose bulb -->
+                        <ellipse cx="140" cy="235" rx="18" ry="14" fill="url(#noseGrad)"/>
+                        <!-- Nostrils -->
+                        <ellipse cx="133" cy="238" rx="5" ry="3" fill="#2a3a2a"/>
+                        <ellipse cx="147" cy="238" rx="5" ry="3" fill="#2a3a2a"/>
+                        <!-- Nose highlight -->
+                        <path d="M136 165 Q138 190 140 215" stroke="#9aba8a" stroke-width="2" fill="none" opacity="0.5"/>
+                    </g>
+
+                    <!-- Cheekbones -->
+                    <ellipse cx="95" cy="190" rx="20" ry="25" fill="#6a8a5a" opacity="0.3"/>
+                    <ellipse cx="185" cy="190" rx="20" ry="25" fill="#6a8a5a" opacity="0.3"/>
+
+                    <!-- Mouth -->
+                    <g transform="translate(140, 260)">
+                        <!-- Upper lip -->
+                        <path d="M-25 -5 Q0 -8 25 -5" stroke="#4a5a4a" stroke-width="3" fill="none"/>
+                        <!-- Lower lip -->
+                        <path d="M-22 0 Q0 8 22 0" stroke="#5a6a5a" stroke-width="2" fill="none"/>
+                        <!-- Mouth line -->
+                        <path d="M-20 0 Q0 3 20 0" stroke="#3a4a3a" stroke-width="2" fill="none"/>
+                        <!-- Corners -->
+                        <path d="M-20 0 L-23 -2 M20 0 L23 -2" stroke="#4a5a4a" stroke-width="1.5"/>
+                        <!-- Chin crease -->
+                        <path d="M-10 18 Q0 20 10 18" stroke="#5a6a5a" stroke-width="1" fill="none" opacity="0.4"/>
+                    </g>
+
+                    <!-- Age lines / wrinkles -->
+                    <path d="M100 200 Q90 220 95 240" stroke="#4a5a4a" stroke-width="1" fill="none" opacity="0.3"/>
+                    <path d="M180 200 Q190 220 185 240" stroke="#4a5a4a" stroke-width="1" fill="none" opacity="0.3"/>
+
+                    <!-- Neck -->
+                    <path d="M110 230 L105 280 L175 280 L170 230" fill="#5a7a4a"/>
+                    <path d="M110 230 Q140 240 170 230" fill="#5a7a4a"/>
+
+                    <!-- Collar/Clothing hint -->
+                    <path d="M90 275 Q140 290 190 275 L200 300 Q140 315 80 300 Z" fill="#3a4a3a"/>
+                    <path d="M120 285 L140 305 L160 285" stroke="#5a6a5a" stroke-width="2" fill="none"/>
+
+                    <!-- Left Ear (front detail) -->
+                    <path d="M65 135 Q40 130 30 115 Q25 100 35 95 Q45 92 55 105" fill="url(#earGrad)" stroke="#4a5a3a" stroke-width="1"/>
+                    <path d="M45 110 Q40 115 42 125" stroke="#5a6a4a" stroke-width="1" fill="none"/>
+
+                    <!-- Right Ear (front detail) -->
+                    <path d="M215 135 Q240 130 250 115 Q255 100 245 95 Q235 92 225 105" fill="url(#earGrad)" stroke="#4a5a3a" stroke-width="1"/>
+                    <path d="M235 110 Q240 115 238 125" stroke="#5a6a4a" stroke-width="1" fill="none"/>
+
+                </svg>
             </div>
             <h1>Mix Dashboard</h1>
             <div class="subtitle">Your personal goblin · Last updated: just now</div>
@@ -840,19 +669,6 @@
         setInterval(() => {
             location.reload();
         }, 30000);
-
-        // Make goblin eyes follow cursor
-        document.addEventListener('mousemove', (e) => {
-            const eyes = document.querySelectorAll('.pupil');
-            const mouseX = e.clientX / window.innerWidth;
-            const mouseY = e.clientY / window.innerHeight;
-            
-            eyes.forEach(eye => {
-                const moveX = (mouseX - 0.5) * 8;
-                const moveY = (mouseY - 0.5) * 6;
-                eye.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
-            });
-        });
     </script>
 </body>
 </html>
