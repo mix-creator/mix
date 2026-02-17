@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>👺 Mix Dashboard</title>
+    <title>👺 Mix Dashboard - Health Overview</title>
     <style>
         :root {
             --bg-primary: #0a1f0a;
@@ -18,7 +18,14 @@
             --success: #4ade80;
             --warning: #fbbf24;
             --error: #f87171;
+            --info: #60a5fa;
             --border: #1f3d1f;
+            --goblin-green: #3d7a3d;
+            --goblin-dark: #1a3d1a;
+            --goblin-light: #5a9a5a;
+            --sleep: #8b5cf6;
+            --readiness: #10b981;
+            --activity: #f59e0b;
         }
 
         * {
@@ -49,8 +56,8 @@
         }
 
         .goblin-container {
-            width: 280px;
-            height: 320px;
+            width: 120px;
+            height: 140px;
             margin: 0 auto 1rem;
             position: relative;
             animation: breathe 4s ease-in-out infinite;
@@ -64,15 +71,14 @@
         .goblin-container svg {
             width: 100%;
             height: 100%;
-            filter: drop-shadow(0 10px 30px rgba(74, 138, 74, 0.4));
+            filter: drop-shadow(0 10px 20px rgba(74, 138, 74, 0.3));
         }
 
         h1 {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 300;
             letter-spacing: -0.02em;
             color: var(--text-primary);
-            margin-top: 0.5rem;
         }
 
         .subtitle {
@@ -83,7 +89,7 @@
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
@@ -91,7 +97,7 @@
         .card {
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: 16px;
             padding: 1.5rem;
             transition: all 0.2s ease;
         }
@@ -112,7 +118,6 @@
 
         .card-icon {
             font-size: 1.5rem;
-            opacity: 0.8;
         }
 
         .card-title {
@@ -121,6 +126,112 @@
             color: var(--text-primary);
         }
 
+        /* Score rings */
+        .score-container {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .score-ring {
+            position: relative;
+            width: 100px;
+            height: 100px;
+        }
+
+        .score-ring svg {
+            transform: rotate(-90deg);
+        }
+
+        .score-bg {
+            fill: none;
+            stroke: var(--bg-hover);
+            stroke-width: 8;
+        }
+
+        .score-fill {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+
+        .score-fill.sleep { stroke: var(--sleep); }
+        .score-fill.readiness { stroke: var(--readiness); }
+        .score-fill.activity { stroke: var(--activity); }
+
+        .score-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .score-number {
+            font-size: 2rem;
+            font-weight: 600;
+            display: block;
+        }
+
+        .score-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .score-details {
+            flex: 1;
+        }
+
+        .trend {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--success);
+            margin-bottom: 0.5rem;
+        }
+
+        .trend.up::before { content: "↑"; }
+        .trend.down::before { content: "↓"; color: var(--error); }
+
+        .score-breakdown {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Metrics grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .metric {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .metric.good { color: var(--success); }
+        .metric.warn { color: var(--warning); }
+        .metric.info { color: var(--info); }
+
+        /* Status items */
         .status-row {
             display: flex;
             justify-content: space-between;
@@ -144,162 +255,55 @@
             font-size: 0.9rem;
         }
 
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
+        /* Coach insight */
+        .insight {
+            background: linear-gradient(135deg, var(--bg-hover) 0%, var(--bg-secondary) 100%);
+            border-radius: 12px;
+            padding: 1.25rem;
+            border-left: 4px solid var(--accent-bright);
+        }
+
+        .insight-title {
             font-size: 0.8rem;
-            font-weight: 500;
+            text-transform: uppercase;
+            color: var(--accent-bright);
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.05em;
         }
 
-        .badge-success {
-            background: rgba(74, 222, 128, 0.15);
-            color: var(--success);
+        .insight-text {
+            font-size: 1rem;
+            line-height: 1.5;
         }
 
-        .badge-warning {
-            background: rgba(251, 191, 36, 0.15);
-            color: var(--warning);
-        }
-
-        .badge-error {
-            background: rgba(248, 113, 113, 0.15);
-            color: var(--error);
-        }
-
-        .badge-info {
-            background: var(--bg-hover);
-            color: var(--text-secondary);
-        }
-
-        .dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: currentColor;
-        }
-
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
+        /* Full width */
         .full-width {
             grid-column: 1 / -1;
         }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-            text-align: center;
-        }
-
-        .stat-box {
+        /* Heart rate graph placeholder */
+        .hr-graph {
+            height: 120px;
             background: var(--bg-secondary);
-            padding: 1.5rem;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: 300;
-            color: var(--accent-bright);
-        }
-
-        .stat-label {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-top: 0.25rem;
-        }
-
-        .channel-row {
+            border-radius: 12px;
             display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 0.75rem;
-            background: var(--bg-secondary);
-            border-radius: 8px;
-            margin-bottom: 0.5rem;
-        }
-
-        .channel-icon {
-            font-size: 1.5rem;
-        }
-
-        .channel-info {
-            flex: 1;
-        }
-
-        .channel-name {
-            font-weight: 500;
-        }
-
-        .channel-detail {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        .session-card {
-            background: var(--bg-secondary);
+            align-items: flex-end;
             padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 0.5rem;
-            border: 1px solid var(--border);
-        }
-
-        .session-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-        }
-
-        .session-id {
-            font-family: monospace;
-            font-size: 0.85rem;
-            color: var(--accent-bright);
-        }
-
-        .session-meta {
-            display: flex;
-            gap: 1rem;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        .progress-bar {
-            height: 4px;
-            background: var(--bg-hover);
-            border-radius: 2px;
+            gap: 2px;
             overflow: hidden;
-            margin-top: 0.5rem;
         }
 
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent), var(--accent-bright));
-            border-radius: 2px;
-            transition: width 0.3s ease;
+        .hr-bar {
+            flex: 1;
+            background: var(--accent);
+            border-radius: 2px 2px 0 0;
+            opacity: 0.7;
+            min-height: 5px;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 2rem;
-            color: var(--text-muted);
-        }
-
-        .empty-state-icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-            opacity: 0.5;
-        }
+        .hr-bar.low { background: var(--success); }
+        .hr-bar.mid { background: var(--warning); }
+        .hr-bar.high { background: var(--error); }
 
         footer {
             text-align: center;
@@ -310,36 +314,18 @@
             margin-top: 2rem;
         }
 
-        .alert {
-            background: rgba(251, 191, 36, 0.1);
-            border: 1px solid var(--warning);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .alert-title {
-            color: var(--warning);
-            font-weight: 500;
-            margin-bottom: 0.25rem;
-        }
-
         @media (max-width: 768px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .grid {
+            .metrics-grid {
                 grid-template-columns: 1fr;
             }
-
-            .goblin-container {
-                width: 200px;
-                height: 230px;
+            
+            .score-container {
+                flex-direction: column;
+                text-align: center;
             }
 
             h1 {
-                font-size: 2rem;
+                font-size: 1.5rem;
             }
         }
     </style>
@@ -348,160 +334,190 @@
     <div class="container">
         <header>
             <div class="goblin-container">
-                <svg viewBox="0 0 280 320" xmlns="http://www.w3.org/2000/svg">
+                <svg viewBox="0 0 140 160" xmlns="http://www.w3.org/2000/svg">
                     <defs>
-                        <!-- Skin gradients -->
                         <radialGradient id="skinGrad" cx="50%" cy="40%" r="60%">
                             <stop offset="0%" stop-color="#7a9a6a"/>
                             <stop offset="50%" stop-color="#5a7a4a"/>
                             <stop offset="100%" stop-color="#3d5a3a"/>
                         </radialGradient>
-                        <radialGradient id="earGrad" cx="30%" cy="50%" r="70%">
-                            <stop offset="0%" stop-color="#6a8a5a"/>
-                            <stop offset="100%" stop-color="#4a6a3a"/>
-                        </radialGradient>
-                        <linearGradient id="noseGrad" x1="50%" y1="0%" x2="50%" y2="100%">
-                            <stop offset="0%" stop-color="#8aaa7a"/>
-                            <stop offset="100%" stop-color="#5a7a4a"/>
-                        </linearGradient>
-                        <!-- Eye gradients -->
                         <radialGradient id="eyeGrad" cx="50%" cy="50%" r="50%">
                             <stop offset="60%" stop-color="#c4a86b"/>
                             <stop offset="100%" stop-color="#8a7a4a"/>
                         </radialGradient>
-                        <radialGradient id="pupilGrad" cx="30%" cy="30%" r="70%">
-                            <stop offset="0%" stop-color="#2a1a0a"/>
-                            <stop offset="100%" stop-color="#0a0a0a"/>
-                        </radialGradient>
-                        <!-- Filters for depth -->
-                        <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-                            <feDropShadow dx="2" dy="4" stdDeviation="3" flood-opacity="0.3"/>
-                        </filter>
-                        <filter id="innerShadow">
-                            <feOffset dx="0" dy="2"/>
-                            <feGaussianBlur stdDeviation="2" result="offset-blur"/>
-                            <feComposite operator="out" in="SourceGraphic" in2="offset-blur" result="inverse"/>
-                            <feFlood flood-color="black" flood-opacity="0.3" result="color"/>
-                            <feComposite operator="in" in="color" in2="inverse" result="shadow"/>
-                            <feComposite operator="over" in="shadow" in2="SourceGraphic"/>
-                        </filter>
                     </defs>
-
-                    <!-- Glow background -->
-                    <ellipse cx="140" cy="160" rx="130" ry="150" fill="url(#skinGrad)" opacity="0.1">
-                        <animate attributeName="opacity" values="0.1;0.2;0.1" dur="3s" repeatCount="indefinite"/>
-                    </ellipse>
-
-                    <!-- Left Ear (back) -->
-                    <path d="M60 140 Q20 120 15 90 Q10 60 35 55 Q55 50 70 80 L85 130" fill="url(#earGrad)" stroke="#3d4a3a" stroke-width="1"/>
-                    <path d="M60 140 Q30 125 25 100 Q22 80 40 75" fill="#4a5a3a" opacity="0.5"/>
-
-                    <!-- Right Ear (back) -->
-                    <path d="M220 140 Q260 120 265 90 Q270 60 245 55 Q225 50 210 80 L195 130" fill="url(#earGrad)" stroke="#3d4a3a" stroke-width="1"/>
-                    <path d="M220 140 Q250 125 255 100 Q258 80 240 75" fill="#4a5a3a" opacity="0.5"/>
-
-                    <!-- Head shape -->
-                    <ellipse cx="140" cy="150" rx="75" ry="90" fill="url(#skinGrad)" filter="url(#shadow)"/>
-
-                    <!-- Forehead wrinkles -->
-                    <path d="M110 85 Q140 80 170 85" stroke="#4a5a3a" stroke-width="2" fill="none" opacity="0.4"/>
-                    <path d="M115 95 Q140 92 165 95" stroke="#4a5a3a" stroke-width="1.5" fill="none" opacity="0.3"/>
-                    <path d="M120 105 Q140 103 160 105" stroke="#4a5a3a" stroke-width="1" fill="none" opacity="0.3"/>
-
-                    <!-- Heavy brow ridge -->
-                    <path d="M95 125 Q140 115 185 125 Q190 130 140 132 Q90 130 95 125" fill="#4a5a4a" filter="url(#shadow)"/>
-
-                    <!-- Left Eye -->
-                    <g transform="translate(105, 140)">
-                        <!-- Eye socket shadow -->
-                        <ellipse cx="0" cy="0" rx="22" ry="18" fill="#3a4a3a" opacity="0.5"/>
-                        <!-- Eyeball -->
-                        <ellipse cx="0" cy="2" rx="18" ry="14" fill="url(#eyeGrad)"/>
-                        <!-- Iris/Pupil -->
-                        <ellipse cx="0" cy="2" rx="8" ry="10" fill="url(#pupilGrad)"/>
-                        <!-- Highlight -->
-                        <ellipse cx="3" cy="-1" rx="3" ry="4" fill="white" opacity="0.6"/>
-                        <!-- Eyelid crease -->
-                        <path d="M-18 -5 Q0 -12 18 -5" stroke="#4a5a3a" stroke-width="2" fill="none"/>
-                        <!-- Under eye bag -->
-                        <path d="M-15 12 Q0 16 15 12" stroke="#5a6a4a" stroke-width="1" fill="none" opacity="0.5"/>
+                    <ellipse cx="70" cy="75" rx="50" ry="60" fill="url(#skinGrad)"/>
+                    <path d="M30 60 Q20 50 25 40 Q30 35 40 45" fill="#5a7a4a"/>
+                    <path d="M110 60 Q120 50 115 40 Q110 35 100 45" fill="#5a7a4a"/>
+                    <g transform="translate(50, 65)">
+                        <ellipse cx="0" cy="0" rx="12" ry="10" fill="url(#eyeGrad)"/>
+                        <ellipse cx="0" cy="0" rx="5" ry="6" fill="#1a0a0a"/>
+                        <ellipse cx="2" cy="-2" rx="2" ry="2" fill="white" opacity="0.6"/>
                     </g>
-
-                    <!-- Right Eye -->
-                    <g transform="translate(175, 140)">
-                        <!-- Eye socket shadow -->
-                        <ellipse cx="0" cy="0" rx="22" ry="18" fill="#3a4a3a" opacity="0.5"/>
-                        <!-- Eyeball -->
-                        <ellipse cx="0" cy="2" rx="18" ry="14" fill="url(#eyeGrad)"/>
-                        <!-- Iris/Pupil -->
-                        <ellipse cx="0" cy="2" rx="8" ry="10" fill="url(#pupilGrad)"/>
-                        <!-- Highlight -->
-                        <ellipse cx="3" cy="-1" rx="3" ry="4" fill="white" opacity="0.6"/>
-                        <!-- Eyelid crease -->
-                        <path d="M-18 -5 Q0 -12 18 -5" stroke="#4a5a3a" stroke-width="2" fill="none"/>
-                        <!-- Under eye bag -->
-                        <path d="M-15 12 Q0 16 15 12" stroke="#5a6a4a" stroke-width="1" fill="none" opacity="0.5"/>
+                    <g transform="translate(90, 65)">
+                        <ellipse cx="0" cy="0" rx="12" ry="10" fill="url(#eyeGrad)"/>
+                        <ellipse cx="0" cy="0" rx="5" ry="6" fill="#1a0a0a"/>
+                        <ellipse cx="2" cy="-2" rx="2" ry="2" fill="white" opacity="0.6"/>
                     </g>
-
-                    <!-- Long crooked nose (Harry Potter style) -->
-                    <g filter="url(#shadow)">
-                        <!-- Nose bridge -->
-                        <path d="M140 135 Q135 160 138 185 Q142 210 140 230" fill="url(#noseGrad)" stroke="#4a5a3a" stroke-width="1"/>
-                        <!-- Nose bulb -->
-                        <ellipse cx="140" cy="235" rx="18" ry="14" fill="url(#noseGrad)"/>
-                        <!-- Nostrils -->
-                        <ellipse cx="133" cy="238" rx="5" ry="3" fill="#2a3a2a"/>
-                        <ellipse cx="147" cy="238" rx="5" ry="3" fill="#2a3a2a"/>
-                        <!-- Nose highlight -->
-                        <path d="M136 165 Q138 190 140 215" stroke="#9aba8a" stroke-width="2" fill="none" opacity="0.5"/>
-                    </g>
-
-                    <!-- Cheekbones -->
-                    <ellipse cx="95" cy="190" rx="20" ry="25" fill="#6a8a5a" opacity="0.3"/>
-                    <ellipse cx="185" cy="190" rx="20" ry="25" fill="#6a8a5a" opacity="0.3"/>
-
-                    <!-- Mouth -->
-                    <g transform="translate(140, 260)">
-                        <!-- Upper lip -->
-                        <path d="M-25 -5 Q0 -8 25 -5" stroke="#4a5a4a" stroke-width="3" fill="none"/>
-                        <!-- Lower lip -->
-                        <path d="M-22 0 Q0 8 22 0" stroke="#5a6a5a" stroke-width="2" fill="none"/>
-                        <!-- Mouth line -->
-                        <path d="M-20 0 Q0 3 20 0" stroke="#3a4a3a" stroke-width="2" fill="none"/>
-                        <!-- Corners -->
-                        <path d="M-20 0 L-23 -2 M20 0 L23 -2" stroke="#4a5a4a" stroke-width="1.5"/>
-                        <!-- Chin crease -->
-                        <path d="M-10 18 Q0 20 10 18" stroke="#5a6a5a" stroke-width="1" fill="none" opacity="0.4"/>
-                    </g>
-
-                    <!-- Age lines / wrinkles -->
-                    <path d="M100 200 Q90 220 95 240" stroke="#4a5a4a" stroke-width="1" fill="none" opacity="0.3"/>
-                    <path d="M180 200 Q190 220 185 240" stroke="#4a5a4a" stroke-width="1" fill="none" opacity="0.3"/>
-
-                    <!-- Neck -->
-                    <path d="M110 230 L105 280 L175 280 L170 230" fill="#5a7a4a"/>
-                    <path d="M110 230 Q140 240 170 230" fill="#5a7a4a"/>
-
-                    <!-- Collar/Clothing hint -->
-                    <path d="M90 275 Q140 290 190 275 L200 300 Q140 315 80 300 Z" fill="#3a4a3a"/>
-                    <path d="M120 285 L140 305 L160 285" stroke="#5a6a5a" stroke-width="2" fill="none"/>
-
-                    <!-- Left Ear (front detail) -->
-                    <path d="M65 135 Q40 130 30 115 Q25 100 35 95 Q45 92 55 105" fill="url(#earGrad)" stroke="#4a5a3a" stroke-width="1"/>
-                    <path d="M45 110 Q40 115 42 125" stroke="#5a6a4a" stroke-width="1" fill="none"/>
-
-                    <!-- Right Ear (front detail) -->
-                    <path d="M215 135 Q240 130 250 115 Q255 100 245 95 Q235 92 225 105" fill="url(#earGrad)" stroke="#4a5a3a" stroke-width="1"/>
-                    <path d="M235 110 Q240 115 238 125" stroke="#5a6a4a" stroke-width="1" fill="none"/>
-
+                    <path d="M70 80 Q68 100 70 115 Q72 130 70 135" fill="#6a8a5a" stroke="#4a5a4a" stroke-width="1"/>
+                    <ellipse cx="70" cy="138" rx="12" ry="8" fill="#7a9a6a"/>
+                    <path d="M55 120 Q70 125 85 120" stroke="#3a4a3a" stroke-width="2" fill="none"/>
+                    <path d="M35 30 L40 15 L45 30" fill="#3d5a3a"/>
+                    <path d="M105 30 L100 15 L95 30" fill="#3d5a3a"/>
                 </svg>
             </div>
-            <h1>Mix Dashboard</h1>
-            <div class="subtitle">Your personal goblin · Last updated: just now</div>
+            <h1>Mix Health Dashboard</h1>
+            <div class="subtitle">Your personal longevity coach · Last updated: just now</div>
         </header>
 
         <div class="grid">
-            <!-- System Status -->
+            <!-- Sleep Score -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">😴</span>
+                    <span class="card-title">Sleep</span>
+                </div>
+                <div class="score-container">
+                    <div class="score-ring">
+                        <svg width="100" height="100" viewBox="0 0 100 100">
+                            <circle class="score-bg" cx="50" cy="50" r="42"/>
+                            <circle class="score-fill sleep" cx="50" cy="50" r="42" 
+                                stroke-dasharray="264" stroke-dashoffset="50"/>
+                        </svg>
+                        <div class="score-text">
+                            <span class="score-number" style="color: var(--sleep)">81</span>
+                            <span class="score-label">Score</span>
+                        </div>
+                    </div>
+                    <div class="score-details">
+                        <div class="trend up">+3 from yesterday</div>
+                        <div class="score-breakdown">
+                            Deep: 87 · REM: 70<br>
+                            Efficiency: 99% · Timing: 99
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Readiness Score -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">💪</span>
+                    <span class="card-title">Readiness</span>
+                </div>
+                <div class="score-container">
+                    <div class="score-ring">
+                        <svg width="100" height="100" viewBox="0 0 100 100">
+                            <circle class="score-bg" cx="50" cy="50" r="42"/>
+                            <circle class="score-fill readiness" cx="50" cy="50" r="42" 
+                                stroke-dasharray="264" stroke-dashoffset="42"/>
+                        </svg>
+                        <div class="score-text">
+                            <span class="score-number" style="color: var(--readiness)">84</span>
+                            <span class="score-label">Score</span>
+                        </div>
+                    </div>
+                    <div class="score-details">
+                        <div class="trend up">+7 from yesterday</div>
+                        <div class="score-breakdown">
+                            HRV: Balanced<br>
+                            Temp: -0.21°C (good)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Score -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">🏃</span>
+                    <span class="card-title">Activity</span>
+                </div>
+                <div class="score-container">
+                    <div class="score-ring">
+                        <svg width="100" height="100" viewBox="0 0 100 100">
+                            <circle class="score-bg" cx="50" cy="50" r="42"/>
+                            <circle class="score-fill activity" cx="50" cy="50" r="42" 
+                                stroke-dasharray="264" stroke-dashoffset="50"/>
+                        </svg>
+                        <div class="score-text">
+                            <span class="score-number" style="color: var(--activity)">81</span>
+                            <span class="score-label">Score</span>
+                        </div>
+                    </div>
+                    <div class="score-details">
+                        <div class="trend">Yesterday</div>
+                        <div class="score-breakdown">
+                            7,395 steps · 7.8 km<br>
+                            Calories: 400/450
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Metrics -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">📊</span>
+                    <span class="card-title">Key Metrics</span>
+                </div>
+                <div class="metrics-grid">
+                    <div class="metric">
+                        <div class="metric-value good">44</div>
+                        <div class="metric-label">Resting HR (min)</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value info">109</div>
+                        <div class="metric-label">Workout Peak HR</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value good">82</div>
+                        <div class="metric-label">HRV Balance</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value warn">2</div>
+                        <div class="metric-label">Inactivity Alerts</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coach Insight -->
+            <div class="card full-width">
+                <div class="card-header">
+                    <span class="card-icon">🧠</span>
+                    <span class="card-title">Coach's Insight</span>
+                </div>
+                <div class="insight">
+                    <div class="insight-title">Today's Brief</div>
+                    <div class="insight-text">
+                        Excellent recovery trend — your readiness jumped +7 points and that 44 bpm resting heart rate during sleep is elite-level. 
+                        Body temperature slightly low (-0.21°C) which correlates with good recovery. 
+                        <br><br>
+                        <strong>Recommendation:</strong> You're primed for a productive day. Consider pushing for that 10k step target today — you were 2.2k short yesterday. 
+                        Morning workout looked solid (HR peaked at 109). Keep the momentum.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Heart Rate Zones -->
+            <div class="card full-width">
+                <div class="card-header">
+                    <span class="card-icon">💓</span>
+                    <span class="card-title">24h Heart Rate</span>
+                </div>
+                <div class="hr-graph" id="hrGraph">
+                    <!-- Bars generated by JS -->
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-muted);">
+                    <span>00:00</span>
+                    <span>06:00</span>
+                    <span>12:00</span>
+                    <span>18:00</span>
+                    <span>Now</span>
+                </div>
+            </div>
+
+            <!-- System Status (keep original) -->
             <div class="card">
                 <div class="card-header">
                     <span class="card-icon">🖥️</span>
@@ -512,163 +528,56 @@
                     <span class="status-value">2026.2.16</span>
                 </div>
                 <div class="status-row">
-                    <span class="status-label">Build</span>
-                    <span class="status-value">2cf82c3</span>
-                </div>
-                <div class="status-row">
-                    <span class="status-label">OS</span>
-                    <span class="status-value">macOS 26.1</span>
-                </div>
-                <div class="status-row">
                     <span class="status-label">Gateway</span>
-                    <span class="badge badge-success"><span class="dot pulse"></span> Running</span>
+                    <span style="color: var(--success)">● Running</span>
                 </div>
                 <div class="status-row">
-                    <span class="status-label">Git</span>
-                    <span class="status-value">main · up to date</span>
-                </div>
-            </div>
-
-            <!-- Channels -->
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-icon">💬</span>
-                    <span class="card-title">Channels</span>
-                </div>
-                <div class="channel-row">
-                    <span class="channel-icon">💬</span>
-                    <div class="channel-info">
-                        <div class="channel-name">WhatsApp</div>
-                        <div class="channel-detail">+4917631640410 · auth 3m ago</div>
-                    </div>
-                    <span class="badge badge-success">ON</span>
-                </div>
-            </div>
-
-            <!-- Quick Stats -->
-            <div class="card full-width">
-                <div class="card-header">
-                    <span class="card-icon">📊</span>
-                    <span class="card-title">Quick Stats</span>
-                </div>
-                <div class="stats-grid">
-                    <div class="stat-box">
-                        <div class="stat-number">1</div>
-                        <div class="stat-label">Active Sessions</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-number">0</div>
-                        <div class="stat-label">Cron Jobs</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-number">0</div>
-                        <div class="stat-label">Subagents</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-number">30m</div>
-                        <div class="stat-label">Heartbeat</div>
-                    </div>
+                    <span class="status-label">WhatsApp</span>
+                    <span style="color: var(--success)">● Connected</span>
                 </div>
             </div>
 
             <!-- Sessions -->
             <div class="card">
                 <div class="card-header">
-                    <span class="card-icon">🧠</span>
-                    <span class="card-title">Sessions</span>
+                    <span class="card-icon">💬</span>
+                    <span class="card-title">Active Session</span>
                 </div>
-                <div class="session-card">
-                    <div class="session-header">
-                        <span class="session-id">agent:main:main</span>
-                        <span class="badge badge-info">direct</span>
+                <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 12px;">
+                    <div style="font-family: monospace; font-size: 0.85rem; color: var(--accent-bright); margin-bottom: 0.5rem;">
+                        agent:main:main
                     </div>
-                    <div class="session-meta">
-                        <span>🤖 kimi-k2.5</span>
-                        <span>⏱️ just now</span>
-                        <span>📝 14k/256k</span>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">
+                        🤖 kimi-k2.5 · ⏱️ just now
                     </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 5%"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Cron Jobs -->
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-icon">⏰</span>
-                    <span class="card-title">Cron Jobs</span>
-                </div>
-                <div class="empty-state">
-                    <div class="empty-state-icon">🦗</div>
-                    <div>No jobs scheduled.</div>
-                    <div style="font-size: 0.8rem; margin-top: 0.5rem;">
-                        Want me to set up email/calendar/weather checks?
-                    </div>
-                </div>
-            </div>
-
-            <!-- Security -->
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-icon">🔒</span>
-                    <span class="card-title">Security</span>
-                </div>
-                <div class="alert">
-                    <div class="alert-title">⚠️ 3 Warnings</div>
-                    <div style="font-size: 0.85rem; color: var(--text-secondary);">
-                        Credentials dir readable by others. Reverse proxy headers not trusted.
-                    </div>
-                </div>
-                <div class="status-row">
-                    <span class="status-label">Critical</span>
-                    <span class="badge badge-success">0</span>
-                </div>
-                <div class="status-row">
-                    <span class="status-label">Warnings</span>
-                    <span class="badge badge-warning">3</span>
-                </div>
-                <div class="status-row">
-                    <span class="status-label">Info</span>
-                    <span class="badge badge-info">1</span>
-                </div>
-            </div>
-
-            <!-- Memory -->
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-icon">🧠</span>
-                    <span class="card-title">Memory</span>
-                </div>
-                <div class="status-row">
-                    <span class="status-label">Files</span>
-                    <span class="status-value">0</span>
-                </div>
-                <div class="status-row">
-                    <span class="status-label">Chunks</span>
-                    <span class="status-value">0</span>
-                </div>
-                <div class="status-row">
-                    <span class="status-label">Status</span>
-                    <span class="badge badge-warning">dirty</span>
-                </div>
-                <div class="status-row">
-                    <span class="status-label">Cache</span>
-                    <span class="status-value">on (0)</span>
                 </div>
             </div>
         </div>
 
         <footer>
-            👺 Mix · Your personal goblin · Living in your machine since 2026
+            👺 Mix · Your personal goblin coach · Living in your machine since 2026
         </footer>
     </div>
 
     <script>
-        // Auto-refresh every 30 seconds
+        // Generate HR graph bars
+        const hrGraph = document.getElementById('hrGraph');
+        const hrData = [48,47,46,45,44,44,45,46,47,48,50,55,60,65,70,75,80,85,90,95,100,105,109,105,100,95,90,85,80,75,70,65,60,58,56,55,54,55,56,58,60,62,65,68,70,72,75,78];
+        
+        hrData.forEach(hr => {
+            const bar = document.createElement('div');
+            bar.className = 'hr-bar';
+            if (hr < 55) bar.classList.add('low');
+            else if (hr < 80) bar.classList.add('mid');
+            else bar.classList.add('high');
+            bar.style.height = `${(hr / 120) * 100}%`;
+            hrGraph.appendChild(bar);
+        });
+
+        // Auto-refresh every 60 seconds
         setInterval(() => {
             location.reload();
-        }, 30000);
+        }, 60000);
     </script>
 </body>
 </html>
