@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👺 Mix Dashboard</title>
+    <style>
+        :root {
+            --bg-primary: #0a1f0a;
+            --bg-secondary: #0d260d;
+            --bg-card: #143314;
+            --bg-hover: #1a401a;
+            --accent: #2d5a2d;
+            --accent-bright: #4a8a4a;
+            --text-primary: #e8f5e8;
+            --text-secondary: #a8c4a8;
+            --text-muted: #6b8a6b;
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --error: #f87171;
+            --border: #1f3d1f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            padding: 3rem 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+
+        .goblin {
+            font-size: 4rem;
+            margin-bottom: 0.5rem;
+            filter: drop-shadow(0 0 20px rgba(74, 138, 74, 0.3));
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .card:hover {
+            border-color: var(--accent-bright);
+            box-shadow: 0 0 30px rgba(45, 90, 45, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+            opacity: 0.8;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid rgba(31, 61, 31, 0.5);
+        }
+
+        .status-row:last-child {
+            border-bottom: none;
+        }
+
+        .status-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .status-value {
+            color: var(--text-primary);
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background: rgba(74, 222, 128, 0.15);
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: rgba(251, 191, 36, 0.15);
+            color: var(--warning);
+        }
+
+        .badge-error {
+            background: rgba(248, 113, 113, 0.15);
+            color: var(--error);
+        }
+
+        .badge-info {
+            background: var(--bg-hover);
+            color: var(--text-secondary);
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            text-align: center;
+        }
+
+        .stat-box {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 300;
+            color: var(--accent-bright);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .channel-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .channel-icon {
+            font-size: 1.5rem;
+        }
+
+        .channel-info {
+            flex: 1;
+        }
+
+        .channel-name {
+            font-weight: 500;
+        }
+
+        .channel-detail {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .session-card {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .session-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .session-id {
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: var(--accent-bright);
+        }
+
+        .session-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: var(--bg-hover);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-bright));
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.5;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+
+        .alert {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid var(--warning);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .alert-title {
+            color: var(--warning);
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="goblin">👺</div>
+            <h1>Mix Dashboard</h1>
+            <div class="subtitle">Your personal goblin · Last updated: just now</div>
+        </header>
+
+        <div class="grid">
+            <!-- System Status -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">🖥️</span>
+                    <span class="card-title">System Status</span>
+                </div>
+                <div class="status-row">
+                    <span class="status-label">OpenClaw</span>
+                    <span class="status-value">2026.2.16</span>
+                </div>
+                <div class="status-row">
+                    <span class="status-label">Build</span>
+                    <span class="status-value">2cf82c3</span>
+                </div>
+                <div class="status-row">
+                    <span class="status-label">OS</span>
+                    <span class="status-value">macOS 26.1</span>
+                </div>
+                <div class="status-row">
+                    <span class="status-label">Gateway</span>
+                    <span class="badge badge-success"><span class="dot pulse"></span> Running</span>
+                </div>
+                <div class="status-row">
+                    <span class="status-label">Git</span>
+                    <span class="status-value">main · up to date</span>
+                </div>
+            </div>
+
+            <!-- Channels -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">💬</span>
+                    <span class="card-title">Channels</span>
+                </div>
+                <div class="channel-row">
+                    <span class="channel-icon">💬</span>
+                    <div class="channel-info">
+                        <div class="channel-name">WhatsApp</div>
+                        <div class="channel-detail">+4917631640410 · auth 3m ago</div>
+                    </div>
+                    <span class="badge badge-success">ON</span>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="card full-width">
+                <div class="card-header">
+                    <span class="card-icon">📊</span>
+                    <span class="card-title">Quick Stats</span>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-number">1</div>
+                        <div class="stat-label">Active Sessions</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">0</div>
+                        <div class="stat-label">Cron Jobs</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">0</div>
+                        <div class="stat-label">Subagents</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">30m</div>
+                        <div class="stat-label">Heartbeat</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sessions -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">🧠</span>
+                    <span class="card-title">Sessions</span>
+                </div>
+                <div class="session-card">
+                    <div class="session-header">
+                        <span class="session-id">agent:main:main</span>
+                        <span class="badge badge-info">direct</span>
+                    </div>
+                    <div class="session-meta">
+                        <span>🤖 kimi-k2.5</span>
+                        <span>⏱️ just now</span>
+                        <span>📝 14k/256k</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 5%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cron Jobs -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">⏰</span>
+                    <span class="card-title">Cron Jobs</span>
+                </div>
+                <div class="empty-state">
+                    <div class="empty-state-icon">🦗</div>
+                    <div>No jobs scheduled.</div>
+                    <div style="font-size: 0.8rem; margin-top: 0.5rem;">
+                        Want me to set up email/calendar/weather checks?
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">🔒</span>
+                    <span class="card-title">Security</span>
+                </div>
+                <div class="alert">
+                    <div class="alert-title">⚠️ 3 Warnings</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                        Credentials dir readable by others. Reverse proxy headers not trusted.
+                    </div>
+                </div>
+                <div class="status-row">
+                    <span class="status-label">Critical</span>
+                    <span class="badge badge-success">0</span>
+                </div>
+                <div class="status-row">
+                    <span class="status-label">Warnings</span>
+                    <span class="badge badge-warning">3</span>
+                </div>
+                <div class="status-row">
+                    <span class="status-label">Info</span>
+                    <span class="badge badge-info">1</span>
+                </div>
+            </div>
+
+            <!-- Memory -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">🧠</span>
+                    <span class="card-title">Memory</span>
+                </div>
+                <div class="status-row">
+                    <span class="status-label">Files</span>
+                    <span class="status-value">0</span>
+                </div>
+                <div class="status-row">
+                    <span class="status-label">Chunks</span>
+                    <span class="status-value">0</span>
+                </div>
+                <div class="status-row">
+                    <span class="status-label">Status</span>
+                    <span class="badge badge-warning">dirty</span>
+                </div>
+                <div class="status-row">
+                    <span class="status-label">Cache</span>
+                    <span class="status-value">on (0)</span>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            👺 Mix · Your personal goblin · Living in your machine since 2026
+        </footer>
+    </div>
+
+    <script>
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            location.reload();
+        }, 30000);
+    </script>
+</body>
+</html>
