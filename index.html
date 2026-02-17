@@ -137,40 +137,6 @@
         }
 
         /* Health summary mini view */
-        .health-summary {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 1rem 0;
-        }
-
-        .health-metric {
-            text-align: center;
-        }
-
-        .health-value {
-            font-size: 2.5rem;
-            font-weight: 600;
-            display: block;
-        }
-
-        .health-value.sleep { color: var(--sleep); }
-        .health-value.readiness { color: var(--readiness); }
-        .health-value.activity { color: var(--activity); }
-
-        .health-label {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .health-divider {
-            width: 1px;
-            height: 50px;
-            background: var(--border);
-        }
-
         .trend-row {
             display: flex;
             justify-content: space-around;
@@ -398,46 +364,28 @@
             <a href="health.html" class="card full-width">
                 <div class="card-header">
                     <span class="card-icon">💚</span>
-                    <span class="card-title">Health Summary</span>
+                    <span class="card-title">Health Trends</span>
                     <span class="card-arrow">→</span>
                 </div>
-                <div class="health-summary">
-                    <div class="health-metric">
-                        <span class="health-value sleep">81</span>
-                        <span class="health-label">Today</span>
+                <div class="trend-row">
+                    <div class="trend-metric">
+                        <span class="trend-value">76</span>
+                        <span class="trend-label avg">avg sleep</span>
+                        <span class="trend-change flat">→ 0</span>
                     </div>
-                    <div class="health-divider"></div>
-                    <div class="health-metric">
-                        <span class="health-value readiness">84</span>
-                        <span class="health-label">Today</span>
+                    <div class="trend-metric">
+                        <span class="trend-value">81</span>
+                        <span class="trend-label avg">avg ready</span>
+                        <span class="trend-change down">↓ 1</span>
                     </div>
-                    <div class="health-divider"></div>
-                    <div class="health-metric">
-                        <span class="health-value activity">81</span>
-                        <span class="health-label">Today</span>
+                    <div class="trend-metric">
+                        <span class="trend-value">86</span>
+                        <span class="trend-label avg">avg active</span>
+                        <span class="trend-change down">↓ 4</span>
                     </div>
                 </div>
-                <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border);">
-                    <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem;">
-                        30-Day Trends (vs previous 30 days)
-                    </div>
-                    <div class="trend-row">
-                        <div class="trend-metric">
-                            <span class="trend-value">76</span>
-                            <span class="trend-label avg">avg sleep</span>
-                            <span class="trend-change flat">→ 0</span>
-                        </div>
-                        <div class="trend-metric">
-                            <span class="trend-value">81</span>
-                            <span class="trend-label avg">avg ready</span>
-                            <span class="trend-change down">↓ 1</span>
-                        </div>
-                        <div class="trend-metric">
-                            <span class="trend-value">86</span>
-                            <span class="trend-label avg">avg active</span>
-                            <span class="trend-change down">↓ 4</span>
-                        </div>
-                    </div>
+                <div style="margin-top: 1rem; font-size: 0.75rem; color: var(--text-muted); text-align: center;">
+                    30-day average vs previous 30 days
                 </div>
             </a>
 
