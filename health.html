@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>👺 Mix Health Details</title>
+    <style>
+        :root {
+            --bg-primary: #0a1f0a;
+            --bg-secondary: #0d260d;
+            --bg-card: #143314;
+            --bg-hover: #1a401a;
+            --accent: #2d5a2d;
+            --accent-bright: #4a8a4a;
+            --text-primary: #e8f5e8;
+            --text-secondary: #a8c4a8;
+            --text-muted: #6b8a6b;
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --error: #f87171;
+            --info: #60a5fa;
+            --border: #1f3d1f;
+            --goblin-green: #3d7a3d;
+            --sleep: #8b5cf6;
+            --readiness: #10b981;
+            --activity: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Back button */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            padding: 0.5rem 0;
+        }
+
+        .back-link:hover {
+            color: var(--accent-bright);
+        }
+
+        header {
+            text-align: center;
+            padding: 1rem 0 2rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+
+        .goblin-container {
+            width: 80px;
+            height: 100px;
+            margin: 0 auto 0.5rem;
+            animation: breathe 4s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1) translateY(0); }
+            50% { transform: scale(1.02) translateY(-3px); }
+        }
+
+        .goblin-container svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 8px 16px rgba(74, 138, 74, 0.3));
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 300;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .card:hover {
+            border-color: var(--accent-bright);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        /* Score rings */
+        .score-container {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .score-ring {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            flex-shrink: 0;
+        }
+
+        .score-ring svg {
+            transform: rotate(-90deg);
+        }
+
+        .score-bg {
+            fill: none;
+            stroke: var(--bg-hover);
+            stroke-width: 8;
+        }
+
+        .score-fill {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+
+        .score-fill.sleep { stroke: var(--sleep); }
+        .score-fill.readiness { stroke: var(--readiness); }
+        .score-fill.activity { stroke: var(--activity); }
+
+        .score-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .score-number {
+            font-size: 2rem;
+            font-weight: 600;
+            display: block;
+        }
+
+        .score-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .score-details {
+            flex: 1;
+        }
+
+        .trend {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--success);
+            margin-bottom: 0.5rem;
+        }
+
+        .trend.up::before { content: "↑"; }
+        .trend.down::before { content: "↓"; color: var(--error); }
+
+        .score-breakdown {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Metrics grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .metric {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .metric.good { color: var(--success); }
+        .metric.warn { color: var(--warning); }
+        .metric.info { color: var(--info); }
+
+        /* Progress bars for sleep stages */
+        .progress-item {
+            margin-bottom: 0.75rem;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.25rem;
+            font-size: 0.85rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--bg-hover);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-fill.deep { background: var(--sleep); }
+        .progress-fill.rem { background: var(--info); }
+        .progress-fill.light { background: var(--accent-bright); }
+
+        /* Coach insight */
+        .insight {
+            background: linear-gradient(135deg, var(--bg-hover) 0%, var(--bg-secondary) 100%);
+            border-radius: 12px;
+            padding: 1.25rem;
+            border-left: 4px solid var(--accent-bright);
+        }
+
+        .insight-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--accent-bright);
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.05em;
+        }
+
+        .insight-text {
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Heart rate graph */
+        .hr-graph {
+            height: 120px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            display: flex;
+            align-items: flex-end;
+            padding: 1rem;
+            gap: 1px;
+            overflow: hidden;
+        }
+
+        .hr-bar {
+            flex: 1;
+            background: var(--accent);
+            border-radius: 1px 1px 0 0;
+            opacity: 0.7;
+            min-height: 3px;
+        }
+
+        .hr-bar.low { background: var(--success); }
+        .hr-bar.mid { background: var(--warning); }
+        .hr-bar.high { background: var(--error); }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .score-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Back to Dashboard</a>
+
+        <header>
+            <div class="goblin-container">
+                <svg viewBox="0 0 140 160" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <radialGradient id="skinGrad" cx="50%" cy="40%" r="60%">
+                            <stop offset="0%" stop-color="#7a9a6a"/>
+                            <stop offset="50%" stop-color="#5a7a4a"/>
+                            <stop offset="100%" stop-color="#3d5a3a"/>
+                        </radialGradient>
+                        <radialGradient id="eyeGrad" cx="50%" cy="50%" r="50%">
+                            <stop offset="60%" stop-color="#c4a86b"/>
+                            <stop offset="100%" stop-color="#8a7a4a"/>
+                        </radialGradient>
+                    </defs>
+                    <ellipse cx="70" cy="75" rx="50" ry="60" fill="url(#skinGrad)"/>
+                    <path d="M30 60 Q20 50 25 40 Q30 35 40 45" fill="#5a7a4a"/>
+                    <path d="M110 60 Q120 50 115 40 Q110 35 100 45" fill="#5a7a4a"/>
+                    <g transform="translate(50, 65)">
+                        <ellipse cx="0" cy="0" rx="12" ry="10" fill="url(#eyeGrad)"/>
+                        <ellipse cx="0" cy="0" rx="5" ry="6" fill="#1a0a0a"/>
+                        <ellipse cx="2" cy="-2" rx="2" ry="2" fill="white" opacity="0.6"/>
+                    </g>
+                    <g transform="translate(90, 65)">
+                        <ellipse cx="0" cy="0" rx="12" ry="10" fill="url(#eyeGrad)"/>
+                        <ellipse cx="0" cy="0" rx="5" ry="6" fill="#1a0a0a"/>
+                        <ellipse cx="2" cy="-2" rx="2" ry="2" fill="white" opacity="0.6"/>
+                    </g>
+                    <path d="M70 80 Q68 100 70 115 Q72 130 70 135" fill="#6a8a5a" stroke="#4a5a4a" stroke-width="1"/>
+                    <ellipse cx="70" cy="138" rx="12" ry="8" fill="#7a9a6a"/>
+                    <path d="M55 120 Q70 125 85 120" stroke="#3a4a3a" stroke-width="2" fill="none"/>
+                    <path d="M35 30 L40 15 L45 30" fill="#3d5a3a"/>
+                    <path d="M105 30 L100 15 L95 30" fill="#3d5a3a"/>
+                </svg>
+            </div>
+            <h1>Health Details</h1>
+            <div class="subtitle">Your personal longevity coach · Full Oura analysis</div>
+        </header>
+
+        <div class="grid">
+            <!-- Sleep Score -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">😴</span>
+                    <span class="card-title">Sleep Score</span>
+                </div>
+                <div class="score-container">
+                    <div class="score-ring">
+                        <svg width="100" height="100" viewBox="0 0 100 100">
+                            <circle class="score-bg" cx="50" cy="50" r="42"/>
+                            <circle class="score-fill sleep" cx="50" cy="50" r="42" 
+                                stroke-dasharray="264" stroke-dashoffset="50"/>
+                        </svg>
+                        <div class="score-text">
+                            <span class="score-number" style="color: var(--sleep)">81</span>
+                            <span class="score-label">Score</span>
+                        </div>
+                    </div>
+                    <div class="score-details">
+                        <div class="trend up">+3 from yesterday</div>
+                        <div class="score-breakdown">
+                            Efficiency: 99%<br>
+                            Latency: 75<br>
+                            Timing: 99
+                        </div>
+                    </div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-header">
+                        <span>Deep Sleep</span>
+                        <span style="color: var(--sleep)">87</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill deep" style="width: 87%"></div>
+                    </div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-header">
+                        <span>REM Sleep</span>
+                        <span style="color: var(--info)">70</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill rem" style="width: 70%"></div>
+                    </div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-header">
+                        <span>Total Sleep</span>
+                        <span style="color: var(--accent-bright)">77</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill light" style="width: 77%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Readiness Score -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">💪</span>
+                    <span class="card-title">Readiness Score</span>
+                </div>
+                <div class="score-container">
+                    <div class="score-ring">
+                        <svg width="100" height="100" viewBox="0 0 100 100">
+                            <circle class="score-bg" cx="50" cy="50" r="42"/>
+                            <circle class="score-fill readiness" cx="50" cy="50" r="42" 
+                                stroke-dasharray="264" stroke-dashoffset="42"/>
+                        </svg>
+                        <div class="score-text">
+                            <span class="score-number" style="color: var(--readiness)">84</span>
+                            <span class="score-label">Score</span>
+                        </div>
+                    </div>
+                    <div class="score-details">
+                        <div class="trend up">+7 from yesterday</div>
+                        <div class="score-breakdown">
+                            HRV Balance: 82<br>
+                            Body Temp: -0.21°C<br>
+                            Recovery Index: 80
+                        </div>
+                    </div>
+                </div>
+                <div class="metrics-grid" style="margin-top: 1rem;">
+                    <div class="metric">
+                        <div class="metric-value good">44</div>
+                        <div class="metric-label">Min HR (sleep)</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value info">80</div>
+                        <div class="metric-label">Resting HR</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Score -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">🏃</span>
+                    <span class="card-title">Activity Score</span>
+                </div>
+                <div class="score-container">
+                    <div class="score-ring">
+                        <svg width="100" height="100" viewBox="0 0 100 100">
+                            <circle class="score-bg" cx="50" cy="50" r="42"/>
+                            <circle class="score-fill activity" cx="50" cy="50" r="42" 
+                                stroke-dasharray="264" stroke-dashoffset="50"/>
+                        </svg>
+                        <div class="score-text">
+                            <span class="score-number" style="color: var(--activity)">81</span>
+                            <span class="score-label">Score</span>
+                        </div>
+                    </div>
+                    <div class="score-details">
+                        <div class="trend">Yesterday</div>
+                        <div class="score-breakdown">
+                            Steps: 7,395<br>
+                            Distance: 7.8 km<br>
+                            Goal progress: 89%
+                        </div>
+                    </div>
+                </div>
+                <div class="metrics-grid" style="margin-top: 1rem;">
+                    <div class="metric">
+                        <div class="metric-value warn">400</div>
+                        <div class="metric-label">Active Cal (89%)</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value warn">2</div>
+                        <div class="metric-label">Inactivity Alerts</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Metrics -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">📊</span>
+                    <span class="card-title">Key Vitals</span>
+                </div>
+                <div class="metrics-grid">
+                    <div class="metric">
+                        <div class="metric-value good">44</div>
+                        <div class="metric-label">Min HR (elite)</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value info">109</div>
+                        <div class="metric-label">Workout Peak HR</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value good">82</div>
+                        <div class="metric-label">HRV Balance</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value good">98</div>
+                        <div class="metric-label">Body Temp Score</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coach Insight -->
+            <div class="card full-width">
+                <div class="card-header">
+                    <span class="card-icon">🧠</span>
+                    <span class="card-title">Coach's Insight</span>
+                </div>
+                <div class="insight">
+                    <div class="insight-title">Today's Brief</div>
+                    <div class="insight-text">
+                        Excellent recovery trend — your readiness jumped +7 points and that 44 bpm resting heart rate during sleep is elite-level. 
+                        Body temperature slightly low (-0.21°C) which correlates with good recovery. 
+                        <br><br>
+                        <strong>Recommendation:</strong> You're primed for a productive day. Consider pushing for that 10k step target today — you were 2.2k short yesterday. 
+                        Morning workout looked solid (HR peaked at 109). Keep the momentum.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Heart Rate Timeline -->
+            <div class="card full-width">
+                <div class="card-header">
+                    <span class="card-icon">💓</span>
+                    <span class="card-title">24h Heart Rate</span>
+                </div>
+                <div class="hr-graph" id="hrGraph"></div>
+                <div style="display: flex; justify-content: space-between; margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-muted);">
+                    <span>00:00</span>
+                    <span>06:00</span>
+                    <span>12:00</span>
+                    <span>18:00</span>
+                    <span>Now</span>
+                </div>
+            </div>
+
+            <!-- Temperature Trend -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">🌡️</span>
+                    <span class="card-title">Temperature</span>
+                </div>
+                <div class="metrics-grid">
+                    <div class="metric">
+                        <div class="metric-value good">-0.21°C</div>
+                        <div class="metric-label">Deviation (good)</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value info">+0.05°C</div>
+                        <div class="metric-label">Trend</div>
+                    </div>
+                </div>
+                <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-secondary);">
+                    Temperature below baseline indicates good recovery. Slight uptick in trend worth monitoring.
+                </p>
+            </div>
+
+            <!-- Sleep Contributors -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">🛌</span>
+                    <span class="card-title">Sleep Contributors</span>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-header">
+                        <span>Restfulness</span>
+                        <span>72</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill deep" style="width: 72%"></div>
+                    </div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-header">
+                        <span>Sleep Balance</span>
+                        <span>79</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill rem" style="width: 79%"></div>
+                    </div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-header">
+                        <span>Sleep Regularity</span>
+                        <span>84</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill light" style="width: 84%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            👺 Mix · Your personal longevity coach · Data from Oura Ring
+        </footer>
+    </div>
+
+    <script>
+        // Generate HR graph bars
+        const hrGraph = document.getElementById('hrGraph');
+        const hrData = [48,47,46,45,44,44,45,46,47,48,50,55,60,65,70,75,80,85,90,95,100,105,109,105,100,95,90,85,80,75,70,65,60,58,56,55,54,55,56,58,60,62,65,68,70,72,75,78];
+        
+        hrData.forEach(hr => {
+            const bar = document.createElement('div');
+            bar.className = 'hr-bar';
+            if (hr < 55) bar.classList.add('low');
+            else if (hr < 80) bar.classList.add('mid');
+            else bar.classList.add('high');
+            bar.style.height = `${(hr / 120) * 100}%`;
+            hrGraph.appendChild(bar);
+        });
+    </script>
+</body>
+</html>
