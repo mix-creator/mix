@@ -71,6 +71,33 @@
             width: 100%;
             height: 100%;
             filter: drop-shadow(0 10px 20px rgba(74, 138, 74, 0.3));
+            transition: filter 0.3s ease;
+        }
+        
+        .goblin-container:hover svg {
+            filter: drop-shadow(0 15px 30px rgba(74, 138, 74, 0.5));
+        }
+        
+        .goblin-hint {
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(26, 58, 26, 0.9);
+            color: #4ade80;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+            white-space: nowrap;
+            border: 1px solid rgba(74, 138, 74, 0.5);
+        }
+        
+        .goblin-container:hover .goblin-hint {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-5px);
         }
 
         h1 {
@@ -322,8 +349,8 @@
 <body>
     <div class="container">
         <header>
-            <div class="goblin-container">
-                <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+            <div class="goblin-container" id="goblinContainer">
+                <svg viewBox="0 0 200 280" xmlns="http://www.w3.org/2000/svg" id="goblinSvg" style="overflow: visible;">
                     <defs>
                         <radialGradient id="goblinSkin" cx="40%" cy="30%" r="70%">
                             <stop offset="0%" stop-color="#8aaa7a"/>
@@ -341,7 +368,12 @@
                         <radialGradient id="eyeGold" cx="50%" cy="50%" r="50%">
                             <stop offset="40%" stop-color="#d4b86a"/>
                             <stop offset="80%" stop-color="#b49a4a"/>
-                            <stop offset="100%" stop-color:#8a7a3a"/>
+                            <stop offset="100%" stop-color="#8a7a3a"/>
+                        </radialGradient>
+                        <radialGradient id="magicGlow" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%" stop-color="#4ade80" stop-opacity="0.6"/>
+                            <stop offset="50%" stop-color="#22c55e" stop-opacity="0.3"/>
+                            <stop offset="100%" stop-color="#16a34a" stop-opacity="0"/>
                         </radialGradient>
                         <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
                             <feDropShadow dx="0" dy="4" stdDeviation="6" flood-opacity="0.4"/>
@@ -354,101 +386,196 @@
                             <feComposite operator="in" in="color" in2="inverse" result="shadow"/>
                             <feComposite operator="over" in="shadow" in2="SourceGraphic"/>
                         </filter>
+                        <filter id="glow">
+                            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
                     </defs>
                     
-                    <!-- Glow/aura -->
-                    <ellipse cx="100" cy="120" rx="90" ry="110" fill="#4a8a4a" opacity="0.1">
-                        <animate attributeName="opacity" values="0.1;0.2;0.1" dur="3s" repeatCount="indefinite"/>
+                    <!-- Magic particles -->
+                    <g id="particles">
+                        <circle cx="50" cy="60" r="2" fill="#4ade80" opacity="0">
+                            <animate attributeName="opacity" values="0;0.8;0" dur="2s" repeatCount="indefinite" begin="0s"/>
+                            <animate attributeName="cy" values="60;40;20" dur="2s" repeatCount="indefinite" begin="0s"/>
+                        </circle>
+                        <circle cx="150" cy="70" r="1.5" fill="#22c55e" opacity="0">
+                            <animate attributeName="opacity" values="0;0.6;0" dur="2.5s" repeatCount="indefinite" begin="0.5s"/>
+                            <animate attributeName="cy" values="70;50;30" dur="2.5s" repeatCount="indefinite" begin="0.5s"/>
+                        </circle>
+                        <circle cx="30" cy="150" r="1" fill="#86efac" opacity="0">
+                            <animate attributeName="opacity" values="0;0.7;0" dur="3s" repeatCount="indefinite" begin="1s"/>
+                            <animate attributeName="cy" values="150;130;110" dur="3s" repeatCount="indefinite" begin="1s"/>
+                        </circle>
+                        <circle cx="170" cy="140" r="2" fill="#4ade80" opacity="0">
+                            <animate attributeName="opacity" values="0;0.9;0" dur="2.2s" repeatCount="indefinite" begin="1.5s"/>
+                            <animate attributeName="cy" values="140;120;100" dur="2.2s" repeatCount="indefinite" begin="1.5s"/>
+                        </circle>
+                    </g>
+                    
+                    <!-- Glow/aura with pulse -->
+                    <ellipse cx="100" cy="120" rx="90" ry="110" fill="url(#magicGlow)" opacity="0.3">
+                        <animate attributeName="opacity" values="0.2;0.5;0.2" dur="2s" repeatCount="indefinite"/>
+                        <animate attributeName="rx" values="90;100;90" dur="2s" repeatCount="indefinite"/>
+                        <animate attributeName="ry" values="110;120;110" dur="2s" repeatCount="indefinite"/>
                     </ellipse>
                     
-                    <!-- Left ear (back) -->
-                    <path d="M45 90 Q15 75 10 55 Q8 40 20 35 Q32 32 42 50 L52 80" 
-                          fill="url(#goblinSkinDark)" stroke="#3a4a2a" stroke-width="1"/>
-                    <path d="M25 50 Q22 58 25 68" stroke="#4a5a3a" stroke-width="1.5" fill="none" opacity="0.5"/>
-                    
-                    <!-- Right ear (back) -->
-                    <path d="M155 90 Q185 75 190 55 Q192 40 180 35 Q168 32 158 50 L148 80" 
-                          fill="url(#goblinSkinDark)" stroke="#3a4a2a" stroke-width="1"/>
-                    <path d="M175 50 Q178 58 175 68" stroke="#4a5a3a" stroke-width="1.5" fill="none" opacity="0.5"/>
-                    
-                    <!-- Head base -->
-                    <ellipse cx="100" cy="105" rx="55" ry="70" fill="url(#goblinSkin)" filter="url(#shadow)"/>
-                    
-                    <!-- Forehead wrinkles -->
-                    <path d="M75 55 Q100 52 125 55" stroke="#4a5a3a" stroke-width="2" fill="none" opacity="0.4"/>
-                    <path d="M80 65 Q100 62 120 65" stroke="#4a5a3a" stroke-width="1.5" fill="none" opacity="0.35"/>
-                    <path d="M85 75 Q100 73 115 75" stroke="#4a5a3a" stroke-width="1" fill="none" opacity="0.3"/>
-                    
-                    <!-- Heavy brow ridge -->
-                    <path d="M65 85 Q100 78 135 85 Q140 90 100 93 Q60 90 65 85" 
-                          fill="#5a6a4a" filter="url(#innerShadow)"/>
-                    
-                    <!-- Left eye -->
-                    <g transform="translate(75, 95)">
-                        <ellipse cx="0" cy="0" rx="18" ry="14" fill="#3a4a3a" opacity="0.3"/>
-                        <ellipse cx="0" cy="2" rx="15" ry="12" fill="url(#eyeGold)"/>
-                        <ellipse cx="0" cy="2" rx="7" ry="9" fill="#1a0a0a"/>
-                        <ellipse cx="2" cy="-1" rx="3" ry="4" fill="white" opacity="0.7"/>
-                        <path d="M-12 -8 Q0 -14 12 -8" stroke="#3a4a3a" stroke-width="2" fill="none"/>
-                        <path d="M-10 15 Q0 18 10 15" stroke="#5a6a4a" stroke-width="1" fill="none" opacity="0.4"/>
-                    </g>
-                    
-                    <!-- Right eye -->
-                    <g transform="translate(125, 95)">
-                        <ellipse cx="0" cy="0" rx="18" ry="14" fill="#3a4a3a" opacity="0.3"/>
-                        <ellipse cx="0" cy="2" rx="15" ry="12" fill="url(#eyeGold)"/>
-                        <ellipse cx="0" cy="2" rx="7" ry="9" fill="#1a0a0a"/>
-                        <ellipse cx="2" cy="-1" rx="3" ry="4" fill="white" opacity="0.7"/>
-                        <path d="M-12 -8 Q0 -14 12 -8" stroke="#3a4a3a" stroke-width="2" fill="none"/>
-                        <path d="M-10 15 Q0 18 10 15" stroke="#5a6a4a" stroke-width="1" fill="none" opacity="0.4"/>
-                    </g>
-                    
-                    <!-- Nose - long and crooked -->
-                    <g filter="url(#shadow)">
-                        <!-- Bridge -->
-                        <path d="M100 110 Q98 135 100 155 Q102 175 100 190" 
-                              fill="url(#noseGrad)" stroke="#4a5a4a" stroke-width="1"/>
-                        <!-- Bulb -->
-                        <ellipse cx="100" cy="195" rx="20" ry="16" fill="url(#noseGrad)"/>
-                        <!-- Nostrils -->
-                        <ellipse cx="92" cy="198" rx="6" ry="4" fill="#2a3a2a"/>
-                        <ellipse cx="108" cy="198" rx="6" ry="4" fill="#2a3a2a"/>
-                        <!-- Highlight -->
-                        <path d="M97 130 Q98 155 100 175" stroke="#abbb9a" stroke-width="2" fill="none" opacity="0.4"/>
-                    </g>
-                    
-                    <!-- Cheekbones -->
-                    <ellipse cx="70" cy="145" rx="15" ry="20" fill="#7a9a6a" opacity="0.2"/>
-                    <ellipse cx="130" cy="145" rx="15" ry="20" fill="#7a9a6a" opacity="0.2"/>
-                    
-                    <!-- Age lines -->
-                    <path d="M60 160 Q55 180 58 200" stroke="#4a5a4a" stroke-width="1" fill="none" opacity="0.25"/>
-                    <path d="M140 160 Q145 180 142 200" stroke="#4a5a4a" stroke-width="1" fill="none" opacity="0.25"/>
-                    
-                    <!-- Mouth - thin and serious -->
-                    <g transform="translate(100, 220)">
-                        <path d="M-20 -5 Q0 -8 20 -5" stroke="#3a4a3a" stroke-width="2.5" fill="none"/>
-                        <path d="M-18 0 Q0 5 18 0" stroke="#4a5a4a" stroke-width="1.5" fill="none"/>
-                        <path d="M-15 -2 L-18 -5 M15 -2 L18 -5" stroke="#3a4a3a" stroke-width="1.5"/>
-                        <!-- Chin -->
-                        <path d="M-8 12 Q0 15 8 12" stroke="#5a6a5a" stroke-width="1" fill="none" opacity="0.3"/>
-                    </g>
-                    
-                    <!-- Neck -->
-                    <path d="M80 235 L75 200 L125 200 L120 235" fill="#5a7a4a"/>
+                    <!-- Head group with subtle bob animation -->
+                    <g id="headGroup">
+                        <animateTransform attributeName="transform" type="translate" 
+                            values="0,0; 0,2; 0,0" dur="4s" repeatCount="indefinite"/>
+                        
+                        <!-- Left ear (back) with twitch -->
+                        <g id="leftEar">
+                            <path d="M45 90 Q15 75 10 55 Q8 40 20 35 Q32 32 42 50 L52 80" 
+                                  fill="url(#goblinSkinDark)" stroke="#3a4a2a" stroke-width="1"/>
+                            <path d="M25 50 Q22 58 25 68" stroke="#4a5a3a" stroke-width="1.5" fill="none" opacity="0.5"/>
+                            <animateTransform attributeName="transform" type="rotate" 
+                                values="0 45 90; -3 45 90; 0 45 90" dur="5s" repeatCount="indefinite"/>
+                        </g>
+                        
+                        <!-- Right ear (back) with independent twitch -->
+                        <g id="rightEar">
+                            <path d="M155 90 Q185 75 190 55 Q192 40 180 35 Q168 32 158 50 L148 80" 
+                                  fill="url(#goblinSkinDark)" stroke="#3a4a2a" stroke-width="1"/>
+                            <path d="M175 50 Q178 58 175 68" stroke="#4a5a3a" stroke-width="1.5" fill="none" opacity="0.5"/>
+                            <animateTransform attributeName="transform" type="rotate" 
+                                values="0 155 90; 2 155 90; 0 155 90" dur="4s" repeatCount="indefinite" begin="1s"/>
+                        </g>
+                        
+                        <!-- Head base -->
+                        <ellipse cx="100" cy="105" rx="55" ry="70" fill="url(#goblinSkin)" filter="url(#shadow)"/>
+                        
+                        <!-- Forehead wrinkles -->
+                        <path d="M75 55 Q100 52 125 55" stroke="#4a5a3a" stroke-width="2" fill="none" opacity="0.4"/>
+                        <path d="M80 65 Q100 62 120 65" stroke="#4a5a3a" stroke-width="1.5" fill="none" opacity="0.35"/>
+                        <path d="M85 75 Q100 73 115 75" stroke="#4a5a3a" stroke-width="1" fill="none" opacity="0.3"/>
+                        
+                        <!-- Heavy brow ridge -->
+                        <path d="M65 85 Q100 78 135 85 Q140 90 100 93 Q60 90 65 85" 
+                              fill="#5a6a4a" filter="url(#innerShadow)"/>
+                        
+                        <!-- Left eye with blink -->
+                        <g transform="translate(75, 95)" id="leftEye">
+                            <ellipse cx="0" cy="0" rx="18" ry="14" fill="#3a4a3a" opacity="0.3"/>
+                            <g id="leftEyeOpen">
+                                <ellipse cx="0" cy="2" rx="15" ry="12" fill="url(#eyeGold)"/>
+                                <ellipse cx="0" cy="2" rx="7" ry="9" fill="#1a0a0a"/>
+                                <ellipse cx="2" cy="-1" rx="3" ry="4" fill="white" opacity="0.7"/>
+                                <animate attributeName="opacity" values="1;1;0;0;1" dur="4s" repeatCount="indefinite" keyTimes="0;0.9;0.95;0.98;1"/>
+                            </g>
+                            <g id="leftEyeClosed" opacity="0">
+                                <path d="M-12 2 Q0 6 12 2" stroke="#3a4a3a" stroke-width="3" fill="none"/>
+                                <animate attributeName="opacity" values="0;0;1;1;0" dur="4s" repeatCount="indefinite" keyTimes="0;0.9;0.95;0.98;1"/>
+                            </g>
+                            <path d="M-12 -8 Q0 -14 12 -8" stroke="#3a4a3a" stroke-width="2" fill="none"/>
+                            <path d="M-10 15 Q0 18 10 15" stroke="#5a6a4a" stroke-width="1" fill="none" opacity="0.4"/>
+                        </g>
+                        
+                        <!-- Right eye with blink (offset timing) -->
+                        <g transform="translate(125, 95)" id="rightEye">
+                            <ellipse cx="0" cy="0" rx="18" ry="14" fill="#3a4a3a" opacity="0.3"/>
+                            <g id="rightEyeOpen">
+                                <ellipse cx="0" cy="2" rx="15" ry="12" fill="url(#eyeGold)"/>
+                                <ellipse cx="0" cy="2" rx="7" ry="9" fill="#1a0a0a"/>
+                                <ellipse cx="2" cy="-1" rx="3" ry="4" fill="white" opacity="0.7"/>
+                                <animate attributeName="opacity" values="1;1;0;0;1" dur="4s" repeatCount="indefinite" begin="0.1s" keyTimes="0;0.9;0.95;0.98;1"/>
+                            </g>
+                            <g id="rightEyeClosed" opacity="0">
+                                <path d="M-12 2 Q0 6 12 2" stroke="#3a4a3a" stroke-width="3" fill="none"/>
+                                <animate attributeName="opacity" values="0;0;1;1;0" dur="4s" repeatCount="indefinite" begin="0.1s" keyTimes="0;0.9;0.95;0.98;1"/>
+                            </g>
+                            <path d="M-12 -8 Q0 -14 12 -8" stroke="#3a4a3a" stroke-width="2" fill="none"/>
+                            <path d="M-10 15 Q0 18 10 15" stroke="#5a6a4a" stroke-width="1" fill="none" opacity="0.4"/>
+                        </g>
+                        
+                        <!-- Nose - long and crooked with subtle wiggle -->
+                        <g filter="url(#shadow)" id="nose">
+                            <animateTransform attributeName="transform" type="translate" 
+                                values="0,0; 1,0; 0,0; -1,0; 0,0" dur="6s" repeatCount="indefinite"/>
+                            <!-- Bridge -->
+                            <path d="M100 110 Q98 135 100 155 Q102 175 100 190" 
+                                  fill="url(#noseGrad)" stroke="#4a5a4a" stroke-width="1"/>
+                            <!-- Bulb -->
+                            <ellipse cx="100" cy="195" rx="20" ry="16" fill="url(#noseGrad)"/>
+                            <!-- Nostrils with flare animation -->
+                            <ellipse cx="92" cy="198" rx="6" ry="4" fill="#2a3a2a">
+                                <animate attributeName="rx" values="6;7;6" dur="3s" repeatCount="indefinite"/>
+                            </ellipse>
+                            <ellipse cx="108" cy="198" rx="6" ry="4" fill="#2a3a2a">
+                                <animate attributeName="rx" values="6;7;6" dur="3s" repeatCount="indefinite"/>
+                            </ellipse>
+                            <!-- Highlight -->
+                            <path d="M97 130 Q98 155 100 175" stroke="#abbb9a" stroke-width="2" fill="none" opacity="0.4"/>
+                        </g>
+                        
+                        <!-- Cheekbones -->
+                        <ellipse cx="70" cy="145" rx="15" ry="20" fill="#7a9a6a" opacity="0.2"/>
+                        <ellipse cx="130" cy="145" rx="15" ry="20" fill="#7a9a6a" opacity="0.2"/>
+                        
+                        <!-- Age lines -->
+                        <path d="M60 160 Q55 180 58 200" stroke="#4a5a4a" stroke-width="1" fill="none" opacity="0.25"/>
+                        <path d="M140 160 Q145 180 142 200" stroke="#4a5a4a" stroke-width="1" fill="none" opacity="0.25"/>
+                        
+                        <!-- Mouth - expressions change on click -->
+                        <g transform="translate(100, 220)" id="mouth">
+                            <!-- Smile (default) -->
+                            <g id="mouthSmile">
+                                <path d="M-20 0 Q0 8 20 0" stroke="#3a4a3a" stroke-width="2.5" fill="none"/>
+                                <path d="M-18 5 Q0 10 18 5" stroke="#4a5a4a" stroke-width="1.5" fill="none" opacity="0.5"/>
+                            </g>
+                            <!-- Serious (hidden by default) -->
+                            <g id="mouthSerious" opacity="0">
+                                <path d="M-20 -5 Q0 -8 20 -5" stroke="#3a4a3a" stroke-width="2.5" fill="none"/>
+                                <path d="M-18 0 Q0 5 18 0" stroke="#4a5a4a" stroke-width="1.5" fill="none"/>
+                                <path d="M-15 -2 L-18 -5 M15 -2 L18 -5" stroke="#3a4a3a" stroke-width="1.5"/>
+                            </g>
+                            <!-- Chin -->
+                            <path d="M-8 12 Q0 15 8 12" stroke="#5a6a5a" stroke-width="1" fill="none" opacity="0.3"/>
+                        </g>
+                        
+                        <!-- Neck -->
+                        <path d="M80 235 L75 200 L125 200 L120 235" fill="#5a7a4a"/>
+                        
+                        <!-- Left ear (front detail) with inner ear -->
+                        <g>
+                            <path d="M48 95 Q35 92 28 82 Q25 72 32 68 Q38 66 45 75" 
+                                  fill="url(#goblinSkin)" stroke="#4a5a4a" stroke-width="1"/>
+                            <path d="M40 85 Q35 80 35 75" stroke="#5a6a5a" stroke-width="1" fill="none" opacity="0.5"/>
+                        </g>
+                        
+                        <!-- Right ear (front detail) with inner ear -->
+                        <g>
+                            <path d="M152 95 Q165 92 172 82 Q175 72 168 68 Q162 66 155 75" 
+                                  fill="url(#goblinSkin)" stroke="#4a5a4a" stroke-width="1"/>
+                            <path d="M160 85 Q165 80 165 75" stroke="#5a6a5a" stroke-width="1" fill="none" opacity="0.5"/>
+                        </g>
+                        
+                        <!-- Warts/moles for character -->
+                        <circle cx="130" cy="130" r="3" fill="#4a6a3a" opacity="0.6"/>
+                        <circle cx="125" cy="135" r="2" fill="#3a5a2a" opacity="0.5"/>
+                    </g> <!-- end headGroup -->
                     
                     <!-- Collar/shoulders hint -->
                     <path d="M60 235 Q100 250 140 235 L150 260 Q100 275 50 260 Z" fill="#3a4a3a"/>
                     <path d="M85 245 L100 260 L115 245" stroke="#5a6a5a" stroke-width="2" fill="none"/>
                     
-                    <!-- Left ear (front detail) -->
-                    <path d="M48 95 Q35 92 28 82 Q25 72 32 68 Q38 66 45 75" 
-                          fill="url(#goblinSkin)" stroke="#4a5a4a" stroke-width="1"/>
+                    <!-- Speech bubble (hidden by default) -->
+                    <g id="speechBubble" opacity="0" transform="translate(140, 40)">
+                        <animate attributeName="opacity" values="0;1;1;0" dur="3s" begin="indefinite" id="speechAnim"/>
+                        <path d="M0 0 Q-10 0 -10 -10 L-10 -50 Q-10 -60 0 -60 L120 -60 Q130 -60 130 -50 L130 -10 Q130 0 120 0 L20 0 L0 15 Z" 
+                              fill="#1a3a1a" stroke="#4a8a4a" stroke-width="2" filter="url(#shadow)"/>
+                        <text x="60" y="-30" text-anchor="middle" fill="#e8f5e8" font-size="12" font-family="monospace">Need help?</text>
+                    </g>
                     
-                    <!-- Right ear (front detail) -->
-                    <path d="M152 95 Q165 92 172 82 Q175 72 168 68 Q162 66 155 75" 
-                          fill="url(#goblinSkin)" stroke="#4a5a4a" stroke-width="1"/>
+                    <!-- Click target overlay -->
+                    <rect x="0" y="0" width="200" height="280" fill="transparent" style="cursor: pointer;" id="goblinClickTarget"/>
                 </svg>
+                
+                <!-- Tooltip hint -->
+                <div class="goblin-hint" id="goblinHint">👆 Click me!</div>
             </div>
             <h1>Mix Dashboard</h1>
             <div class="subtitle">Your personal goblin · Tap tiles for details</div>
@@ -595,6 +722,69 @@
     </div>
 
     <script>
+        // Goblin interactivity
+        const goblinContainer = document.getElementById('goblinContainer');
+        const goblinClickTarget = document.getElementById('goblinClickTarget');
+        const speechBubble = document.getElementById('speechBubble');
+        const speechAnim = document.getElementById('speechAnim');
+        const mouthSmile = document.getElementById('mouthSmile');
+        const mouthSerious = document.getElementById('mouthSerious');
+        const goblinHint = document.getElementById('goblinHint');
+        
+        const messages = [
+            "Need help?",
+            "I'm watching!",
+            "Mix is here!",
+            "Ask me anything!",
+            "Ready to assist!",
+            "System online!"
+        ];
+        
+        let messageIndex = 0;
+        let isSmiling = true;
+        
+        goblinClickTarget.addEventListener('click', () => {
+            // Change message
+            const textElement = speechBubble.querySelector('text');
+            textElement.textContent = messages[messageIndex];
+            messageIndex = (messageIndex + 1) % messages.length;
+            
+            // Show speech bubble
+            speechAnim.beginElement();
+            
+            // Toggle mouth expression
+            isSmiling = !isSmiling;
+            if (isSmiling) {
+                mouthSmile.style.opacity = '1';
+                mouthSerious.style.opacity = '0';
+            } else {
+                mouthSmile.style.opacity = '0';
+                mouthSerious.style.opacity = '1';
+            }
+            
+            // Change hint
+            goblinHint.textContent = "👋 Hello!";
+            setTimeout(() => {
+                goblinHint.textContent = "👆 Click me!";
+            }, 2000);
+        });
+        
+        // Random blink more frequently
+        setInterval(() => {
+            if (Math.random() > 0.7) {
+                // Trigger a blink by temporarily changing animation
+                const eyes = document.querySelectorAll('#leftEyeOpen, #rightEyeOpen');
+                eyes.forEach(eye => {
+                    const originalOpacity = eye.style.opacity;
+                    eye.style.opacity = '0';
+                    setTimeout(() => {
+                        eye.style.opacity = originalOpacity || '1';
+                    }, 150);
+                });
+            }
+        }, 3000);
+        
+        // Auto refresh
         setInterval(() => {
             location.reload();
         }, 60000);
