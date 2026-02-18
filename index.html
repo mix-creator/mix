@@ -56,7 +56,7 @@
 
         .goblin-container {
             width: 140px;
-            height: 220px;
+            height: 180px;
             margin: 0 auto 1rem;
             position: relative;
             animation: breathe 4s ease-in-out infinite;
@@ -350,7 +350,7 @@
     <div class="container">
         <header>
             <div class="goblin-container" id="goblinContainer">
-                <svg viewBox="0 0 200 320" xmlns="http://www.w3.org/2000/svg" id="goblinSvg" style="overflow: visible;">
+                <svg viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg" id="goblinSvg" style="overflow: visible;">
                     <defs>
                         <radialGradient id="goblinSkin" cx="40%" cy="30%" r="70%">
                             <stop offset="0%" stop-color="#8aaa7a"/>
@@ -491,24 +491,24 @@
                             <path d="M-10 15 Q0 18 10 15" stroke="#5a6a4a" stroke-width="1" fill="none" opacity="0.4"/>
                         </g>
                         
-                        <!-- Nose - long and crooked with subtle wiggle -->
+                        <!-- Nose - normal goblin nose in center of face -->
                         <g filter="url(#shadow)" id="nose">
                             <animateTransform attributeName="transform" type="translate" 
-                                values="0,0; 1,0; 0,0; -1,0; 0,0" dur="6s" repeatCount="indefinite"/>
-                            <!-- Bridge -->
-                            <path d="M100 110 Q98 135 100 155 Q102 175 100 190" 
+                                values="0,0; 0.5,0; 0,0; -0.5,0; 0,0" dur="6s" repeatCount="indefinite"/>
+                            <!-- Bridge - shorter, centered between eyes and mouth -->
+                            <path d="M100 115 Q98 130 100 140 Q102 150 100 155" 
                                   fill="url(#noseGrad)" stroke="#4a5a4a" stroke-width="1"/>
-                            <!-- Bulb -->
-                            <ellipse cx="100" cy="195" rx="20" ry="16" fill="url(#noseGrad)"/>
+                            <!-- Bulb - smaller, higher up -->
+                            <ellipse cx="100" cy="158" rx="14" ry="10" fill="url(#noseGrad)"/>
                             <!-- Nostrils with flare animation -->
-                            <ellipse cx="92" cy="198" rx="6" ry="4" fill="#2a3a2a">
-                                <animate attributeName="rx" values="6;7;6" dur="3s" repeatCount="indefinite"/>
+                            <ellipse cx="95" cy="160" rx="4" ry="3" fill="#2a3a2a">
+                                <animate attributeName="rx" values="4;5;4" dur="3s" repeatCount="indefinite"/>
                             </ellipse>
-                            <ellipse cx="108" cy="198" rx="6" ry="4" fill="#2a3a2a">
-                                <animate attributeName="rx" values="6;7;6" dur="3s" repeatCount="indefinite"/>
+                            <ellipse cx="105" cy="160" rx="4" ry="3" fill="#2a3a2a">
+                                <animate attributeName="rx" values="4;5;4" dur="3s" repeatCount="indefinite"/>
                             </ellipse>
                             <!-- Highlight -->
-                            <path d="M97 130 Q98 155 100 175" stroke="#abbb9a" stroke-width="2" fill="none" opacity="0.4"/>
+                            <path d="M98 125 Q99 140 100 150" stroke="#abbb9a" stroke-width="1.5" fill="none" opacity="0.4"/>
                         </g>
                         
                         <!-- Cheekbones -->
