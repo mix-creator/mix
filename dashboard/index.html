@@ -384,10 +384,12 @@
 
         function loadDefaultModel() {
             // Try to load models in order of preference
+            // Use absolute paths for GitHub Pages compatibility
+            const basePath = '/mix/dashboard/';
             const models = [
-                { file: 'xbot.glb', name: 'XBot' },
-                { file: 'fox.glb', name: 'Fox' },
-                { file: 'goblin.glb', name: 'Goblin' }
+                { file: basePath + 'xbot.glb', name: 'XBot' },
+                { file: basePath + 'fox.glb', name: 'Fox' },
+                { file: basePath + 'goblin.glb', name: 'Goblin' }
             ];
             
             const loader = new GLTFLoader();
